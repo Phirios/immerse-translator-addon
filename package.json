@@ -1,0 +1,26 @@
+{
+  "name": "immerse-translator-addon",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "axios": "^1.7.9",
+    "deepl-node": "^1.15.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "form-data": "^4.0.1",
+    "stremio-addon-sdk": "^1.6.10",
+    "subtitles-downloader": "^1.5.3"
+  },
+  "devDependencies": {
+    "@types/stremio-addon-sdk": "^1.6.11"
+  }
+}
