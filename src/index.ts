@@ -3,7 +3,7 @@ import {fetchSubtitles} from './getSubs'
 import * as fs from "fs";
 import path from "node:path";
 import axios from "axios";
-import express, {Express} from "express";
+import express from "express";
 import {deepLTranslate} from "./translateToTurkish";
 import zlib from "node:zlib";
 
@@ -39,12 +39,12 @@ builder.defineSubtitlesHandler(async ({ id,type,extra}):Promise<{subtitles:Subti
             const buffer = Buffer.from(data, 'binary');
             const unzipped = zlib.unzipSync(buffer);
 
-            // if (await deepLTranslate(unzipped, `${id}.srt`))
-            //     subtitles.push({
-            //         id: subsData.id,
-            //         url: `https://subs.phirios.com/${id}.srt`,
-            //         lang: 'Türkçe',
-            //     });
+            if (await deepLTranslate(unzipped, `${id}.srt`))
+                subtitles.push({
+                    id: subsData.id,
+                    url: `https://subs.phirios.com/${id}.srt`,
+                    lang: 'Türkçe',
+                });
         }else{
             console.log("Returning cached subtitle");
             subtitles.push({
