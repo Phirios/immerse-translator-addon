@@ -1,6 +1,22 @@
 import axios, {AxiosResponse} from "axios";
 
-export default async function handleFetch({url,options,fetchOption,count}:{url:string,options?:any,fetchOption?:'axios'| 'fetch',count ? : number}):Promise<{res:undefined,error: any}|{res:Response | AxiosResponse<any, any>,error:undefined}> {
+export default async function handleFetch(
+    {
+        url,
+        options,
+        fetchOption,
+        count
+    }:{
+        url:string,
+        options?:any,
+        fetchOption?:'axios'| 'fetch',
+        count ? : number
+    }):Promise<{
+        res:undefined,
+        error: any
+    }|{
+        res:Response | AxiosResponse<any, any>,
+        error:undefined}> {
 
     try {
         const res = fetchOption === 'axios' ? await axios.get(url, options) : await fetch(url, options)

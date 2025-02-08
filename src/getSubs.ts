@@ -148,5 +148,3 @@ function getBestSub(subs:any){
     console.log('Subtitles found:', subs.length);
     return subs.reduce((prev:any, current:any) => (current.Score > (prev?.Score ?? -Infinity) ? current : prev), null);
 }
-
-fetchSubtitles('tt14230458').then(console.log)
