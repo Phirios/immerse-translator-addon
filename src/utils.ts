@@ -49,3 +49,5 @@ export const LANG_NAMES: Record<string, string> = {
   gre: 'Ελληνικά',
   hrv: 'Hrvatski',
 };
+
+export const LANG_OPTIONS = Object.entries(LANG_NAMES).map(([code, name]) => `${code} - ${name}`);
