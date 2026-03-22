@@ -214,7 +214,8 @@ function install() {
     fallback_lang: document.getElementById('fallback_lang').value,
   };
   const encoded = encodeURIComponent(JSON.stringify(config));
-  window.location.href = 'stremio://' + window.location.host + '/' + encoded + '/manifest.json';
+  const addonUrl = window.location.origin + '/' + encoded + '/manifest.json';
+  window.location.href = 'https://app.strem.io/#/addons?addon=' + encodeURIComponent(addonUrl);
 }
 </script>
 </body></html>`);
