@@ -150,82 +150,24 @@ app.get('/download', async (req, res) => {
   }
 });
 
-// Configure page
-app.get('/configure', (req, res) => {
-  const langOptionsHtml = LANG_OPTIONS.map((opt) => {
-    const code = opt.split(' - ')[0];
-    const selected = code === 'tur' ? 'selected' : '';
-    return `<option value="${opt}" ${selected}>${opt}</option>`;
-  }).join('\n');
-
-  const fallbackOptionsHtml = LANG_OPTIONS.map((opt) => {
-    const code = opt.split(' - ')[0];
-    const selected = code === 'eng' ? 'selected' : '';
-    return `<option value="${opt}" ${selected}>${opt}</option>`;
-  }).join('\n');
-
-  res.send(`<!DOCTYPE html>
-<html><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OpenSubtitles.org Subtitles - Configure</title>
-<style>
-  body { font-family: -apple-system, sans-serif; background: #0a0a2e; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-  .container { background: #1a1a4e; border-radius: 12px; padding: 32px; max-width: 420px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
-  h1 { font-size: 1.3em; margin: 0 0 24px; text-align: center; }
-  label { display: block; margin: 16px 0 6px; font-size: 0.9em; color: #aab; }
-  select, input[type=text] { width: 100%; padding: 10px; border: 1px solid #333; border-radius: 6px; background: #0d0d2b; color: #fff; font-size: 0.95em; box-sizing: border-box; }
-  .deepl-fields { display: none; }
-  .deepl-fields.visible { display: block; }
-  button { width: 100%; padding: 12px; margin-top: 24px; background: #7b5bf5; color: #fff; border: none; border-radius: 6px; font-size: 1em; cursor: pointer; font-weight: 600; }
-  button:hover { background: #6a4be0; }
-</style>
-</head><body>
-<div class="container">
-  <h1>OpenSubtitles.org Subtitles</h1>
-  <label>Subtitle Language</label>
-  <select id="lang">${langOptionsHtml}</select>
-
-  <label>DeepL Translation Fallback</label>
-  <select id="deepl_enabled" onchange="toggleDeepL()">
-    <option value="disabled">Disabled</option>
-    <option value="enabled">Enabled</option>
-  </select>
-
-  <div id="deepl-fields" class="deepl-fields">
-    <label>DeepL API Key</label>
-    <input type="text" id="deepl_api_key" placeholder="Enter your DeepL API key">
-
-    <label>Fallback Language</label>
-    <select id="fallback_lang">${fallbackOptionsHtml}</select>
-  </div>
-
-  <button onclick="install()">Install</button>
-</div>
-<script>
-function toggleDeepL() {
-  document.getElementById('deepl-fields').classList.toggle('visible', document.getElementById('deepl_enabled').value === 'enabled');
-}
-function install() {
-  const config = {
-    lang: document.getElementById('lang').value,
-    deepl_enabled: document.getElementById('deepl_enabled').value,
-    deepl_api_key: document.getElementById('deepl_api_key').value || '',
-    fallback_lang: document.getElementById('fallback_lang').value,
-  };
-  const encoded = encodeURIComponent(JSON.stringify(config));
-  const addonUrl = window.location.origin + '/' + encoded + '/manifest.json';
-  window.location.href = 'https://app.strem.io/#/addons?addon=' + encodeURIComponent(addonUrl);
-}
-</script>
-</body></html>`);
-});
-
 // Serve cached translations
 app.use('/cache', express.static(CACHE_DIR));
 
-// Stremio addon routes (config-based paths handled by SDK)
-app.use('/', getRouter(addonInterface));
+// SDK router first (handles /:config?/manifest.json and resource routes)
+app.use(getRouter(addonInterface));
+
+// Landing page & configure (same pattern as SDK's serveHTTP)
+const landingTemplate = require('stremio-addon-sdk/src/landingTemplate');
+const landingHTML = landingTemplate(addonInterface.manifest);
+
+app.get('/', (_, res) => {
+  res.redirect('/configure');
+});
+
+app.get('/configure', (_, res) => {
+  res.setHeader('content-type', 'text/html');
+  res.end(landingHTML);
+});
 
 app.listen(ADDON_PORT, () => {
   console.log(`Stremio addon listening on port ${ADDON_PORT}`);
