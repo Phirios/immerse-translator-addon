@@ -203,6 +203,7 @@ app.get('/configure', (req, res) => {
 
   <button onclick="install()">Install</button>
   <div id="manifest-url" class="manifest-url" onclick="copyUrl()"></div>
+  <p id="hint" style="display:none;margin-top:8px;font-size:0.75em;color:#889;text-align:center;">Click the URL above to copy, then paste in Stremio's addon search bar</p>
 </div>
 <script>
 function toggleDeepL() {
@@ -219,11 +220,11 @@ function getManifestUrl() {
 }
 function install() {
   var manifestUrl = getManifestUrl();
-  var stremioWebUrl = 'https://app.strem.io/#/addons?addon=' + encodeURIComponent(manifestUrl);
   var el = document.getElementById('manifest-url');
   el.textContent = manifestUrl;
   el.classList.add('visible');
-  window.open(stremioWebUrl, '_blank');
+  document.getElementById('hint').style.display = 'block';
+  window.location.href = 'https://app.strem.io/#/addons?addon=' + encodeURIComponent(manifestUrl);
 }
 function copyUrl() {
   var el = document.getElementById('manifest-url');
